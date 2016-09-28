@@ -1,0 +1,67 @@
+	<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>LOG IN DADOS</title>
+<script type="text/javascript" src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+<script type="text/javascript">
+	function callBackMudancaStatus(response) {
+		if(response.status === 'connected'){
+			$('#logar').hide();
+			$('status').html('<a href="javascript:void(0);" onclick="logOut();" id="logout">LogOut</a>')
+			testAPI();
+		} else if(response.status === 'not_authorized'){
+			$('#status').append('<p>Loga na poha do face mizera.</p>')
+			$('#logout').remove();
+		} else {
+			$('#logout').remove();
+			$('#status').append('<p>Vai loga não ?</p>')
+		}
+	}
+	
+	window.fbAsyncInit = function(){
+		FB.init({
+			appId: '218182378584698',
+			cookie: true,
+			version: 'v2.1'
+		});
+		
+		FB.getLoginStatus(function(response){
+			callBackMudancaStatus(response);
+		});
+	};
+	
+	(function(d, s, id){
+	    var js, fjs = d.getElementsByTagName(s)[0];
+	    if (d.getElementById(id)) {return;}
+	    js = d.createElement(s); js.id = id;
+	    js.src = "//connect.facebook.net/en_US/sdk.js";
+	    fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+	
+	function testAPI(){
+        FB.api('/me?fields=id, first_name , email, gender, last_name, link, locale, location, name, timezone, verified', function(response){
+        $('status').append('<p>Olá, '+response.name+' seja bem vindo</p>');
+        console.log(response);
+       });
+	}
+	
+	function logOut(){
+		FB.logout(function(response){
+			callBackMudancaStatus(response);
+			$('status').html('Saiu já cão');
+		});
+	}
+	
+	function login(){
+		FB.login(function(response){
+			callBackMudancaStatus(response);
+		});
+	}
+</script>
+</head>
+<body bgcolor="#ebebeb">
+	<a href="javascript:void(0)" onclick="login();" id="logar">Login</a>
+	<div id="status"></div>
+</body>
+</html>	
